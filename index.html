@@ -1,0 +1,3595 @@
+<meta charset="utf-8" />
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" />
+
+<style type="text/css">/* =========================================================
+     MASQUAGE DU TITRE NATIF DU BLOC CARTE
+     Ne masque pas le titre interne "Venez découvrir…"
+     ========================================================= */
+
+  .bp-map-custom-host {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .bp-map-custom-host > .container {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .bp-map-custom-host > .container > h2.h2,
+  .bp-map-custom-host > .container > h2:first-child {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+  }
+.bp-explore-section,
+  .bp-explore-section * {
+    box-sizing: border-box;
+  }
+
+  .bp-explore-section {
+    --bp-navy: #0b2745;
+    --bp-orange: #f47a00;
+    --bp-green: #65a83f;
+    --bp-blue: #1268b3;
+
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: clamp(64px, 8vw, 112px) clamp(20px, 5vw, 86px);
+    background: #ffffff;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .bp-explore-inner {
+    width: 100%;
+    max-width: 1520px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(270px, 380px) minmax(0, 1fr);
+    gap: clamp(42px, 6vw, 112px);
+    align-items: center;
+  }
+
+  .bp-explore-left {
+    position: relative;
+    z-index: 5;
+    pointer-events: auto;
+  }
+
+  .bp-explore-left h2 {
+    margin: 0 0 22px;
+    color: var(--bp-navy);
+    font-size: clamp(2.45rem, 4.35vw, 4.35rem);
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+    font-weight: 950;
+  }
+
+  .bp-explore-left h3 {
+    margin: 0 0 16px;
+    color: var(--bp-orange);
+    font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+    line-height: 1.18;
+    font-weight: 900;
+  }
+
+  .bp-explore-left p {
+    margin: 0;
+    max-width: 340px;
+    color: #43536a;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .bp-map-filters {
+    margin: 30px 0 24px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .bp-filter-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 14px 30px rgba(15, 39, 66, 0.075);
+    border: 1px solid rgba(11, 39, 69, 0.055);
+    overflow: hidden;
+  }
+
+  .bp-filter-field select,
+  .bp-filter-field input {
+    width: 100%;
+    height: 48px;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    color: var(--bp-navy);
+    font-size: 14px;
+    padding: 0 18px;
+    box-shadow: none !important;
+  }
+
+  .bp-filter-field select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 44px;
+  }
+
+  .bp-filter-field--select::after {
+    content: "";
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid rgba(11, 39, 69, 0.65);
+    border-bottom: 2px solid rgba(11, 39, 69, 0.65);
+    transform: translateY(-65%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .bp-filter-field input::placeholder {
+    color: rgba(67, 83, 106, 0.62);
+  }
+
+  .bp-map-hint {
+    margin-top: 18px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .bp-map-legend {
+    margin-top: 28px;
+    width: 100%;
+    max-width: 335px;
+    padding: 24px 24px 22px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.10);
+    border: 1px solid rgba(11, 39, 69, 0.04);
+  }
+
+  .bp-map-legend-title {
+    margin: 0 0 22px;
+    color: var(--bp-navy);
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+  }
+
+  .bp-legend-item {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .bp-legend-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .bp-legend-pin {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px 999px 999px 0;
+    transform: rotate(-45deg) scale(0.82);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.18);
+  }
+
+  .bp-legend-pin::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    top: 10px;
+    left: 10px;
+    border-radius: 999px;
+    background: #ffffff;
+  }
+
+  .bp-legend-pin--done {
+    background: var(--bp-green);
+  }
+
+  .bp-legend-pin--progress {
+    background: var(--bp-orange);
+  }
+
+  .bp-legend-pin--study {
+    background: var(--bp-blue);
+  }
+
+  .bp-legend-text strong {
+    display: block;
+    color: var(--bp-navy);
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .bp-legend-text span {
+    display: block;
+    margin-top: 3px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .bp-map-right {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    pointer-events: auto;
+    overflow: hidden;
+    isolation: isolate;
+    contain: paint;
+  }
+
+  .bp-map-stage {
+    position: relative;
+    width: 100%;
+    height: clamp(560px, 58vw, 780px);
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 0;
+    background: #f3f1ea;
+  }
+
+  #bpLeafletMap {
+    --bp-shadow-wide-x: -4px;
+    --bp-shadow-wide-y: 24px;
+    --bp-shadow-wide-blur: 14px;
+
+    --bp-shadow-contact-x: -2px;
+    --bp-shadow-contact-y: 13px;
+    --bp-shadow-contact-blur: 5px;
+
+    --bp-depth-back-x: 0px;
+    --bp-depth-back-y: 8px;
+    --bp-depth-mid-x: 0px;
+    --bp-depth-mid-y: 4px;
+    --bp-depth-front-x: 0px;
+    --bp-depth-front-y: 0px;
+
+    --bp-dot-size: 10px;
+    --bp-dot-border: 2px;
+    --bp-pin-scale: 0.72;
+    --bp-focus-pin-scale: 0.86;
+
+    width: 100%;
+    height: 100%;
+    background: #f3f1ea;
+    overflow: hidden;
+  }
+
+  #bpLeafletMap .leaflet-container,
+  #bpLeafletMap.leaflet-container {
+    background: #f3f1ea;
+  }
+
+  #bpLeafletMap .leaflet-control-container {
+    display: none;
+  }
+
+  .leaflet-basemap-pane {
+    pointer-events: none;
+  }
+
+  .leaflet-relief-pane {
+    pointer-events: none;
+  }
+
+  #bpLeafletMap .leaflet-relief-pane path {
+    shape-rendering: geometricPrecision;
+  }
+
+  .leaflet-basemap-pane .leaflet-tile {
+    filter: none;
+  }
+
+  /* Secours si WebGL est indisponible : OSM reste doux et peu contrasté. */
+  #bpLeafletMap.uses-raster-fallback .leaflet-basemap-pane {
+    filter: saturate(0.34) brightness(1.16) contrast(0.72) !important;
+    opacity: 0.84;
+  }
+
+  #bpLeafletMap svg path.bp-map-stack {
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform, opacity, filter;
+  }
+
+  #bpLeafletMap svg path.bp-stack-shadow-wide {
+    transform: translate(var(--bp-shadow-wide-x), var(--bp-shadow-wide-y));
+    filter: blur(var(--bp-shadow-wide-blur));
+  }
+
+  #bpLeafletMap svg path.bp-stack-shadow-contact {
+    transform: translate(var(--bp-shadow-contact-x), var(--bp-shadow-contact-y));
+    filter: blur(var(--bp-shadow-contact-blur));
+  }
+
+  #bpLeafletMap svg path.bp-stack-depth-back {
+    transform: translate(var(--bp-depth-back-x), var(--bp-depth-back-y));
+  }
+
+  #bpLeafletMap svg path.bp-stack-depth-mid {
+    transform: translate(var(--bp-depth-mid-x), var(--bp-depth-mid-y));
+  }
+
+  #bpLeafletMap svg path.bp-stack-depth-front {
+    transform: translate(var(--bp-depth-front-x), var(--bp-depth-front-y));
+  }
+
+  #bpLeafletMap svg path.bp-stack-active {
+    filter:
+      drop-shadow(2px -2px 1px rgba(255, 255, 255, 0.9))
+      drop-shadow(-2px 4px 2px rgba(145, 78, 18, 0.22))
+      drop-shadow(-6px 12px 8px rgba(73, 45, 22, 0.32));
+  }
+
+  .bp-district-label {
+    color: rgba(11, 39, 69, 0.64);
+    font-size: 9px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.05;
+    text-shadow:
+      0 1px 0 rgba(255, 250, 243, 0.96),
+      1px 0 0 rgba(255, 250, 243, 0.96),
+      -1px 0 0 rgba(255, 250, 243, 0.96),
+      0 -1px 0 rgba(255, 250, 243, 0.96);
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+
+  #bpLeafletMap.is-focus-mode .bp-district-label {
+    opacity: 0 !important;
+  }
+
+  .bp-project-dot-icon,
+  .bp-pin-icon {
+    background: transparent;
+    border: 0;
+  }
+
+  .bp-project-dot {
+    width: var(--bp-dot-size);
+    height: var(--bp-dot-size);
+    border-radius: 999px;
+    border: var(--bp-dot-border) solid #ffffff;
+    box-shadow: 0 4px 9px rgba(15, 23, 42, 0.18);
+  }
+
+  .bp-project-dot--done {
+    background: var(--bp-green);
+  }
+
+  .bp-project-dot--progress {
+    background: var(--bp-orange);
+  }
+
+  .bp-project-dot--study {
+    background: var(--bp-blue);
+  }
+
+  .bp-project-dot--default {
+    background: #475569;
+  }
+
+  .bp-pin {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg) scale(var(--bp-pin-scale));
+    border: 3px solid #ffffff;
+    box-shadow: 0 6px 13px rgba(15, 23, 42, 0.20);
+  }
+
+  .bp-pin span {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    top: 5.5px;
+    left: 5.5px;
+    border-radius: 999px;
+    background: #ffffff;
+  }
+
+  .bp-pin--focus {
+    transform: rotate(-45deg) scale(var(--bp-focus-pin-scale));
+    box-shadow:
+      0 9px 20px rgba(15, 23, 42, 0.26),
+      0 0 0 7px rgba(255, 255, 255, 0.34);
+  }
+
+  .bp-pin--done {
+    background: var(--bp-green);
+  }
+
+  .bp-pin--progress {
+    background: var(--bp-orange);
+  }
+
+  .bp-pin--study {
+    background: var(--bp-blue);
+  }
+
+  .bp-pin--default {
+    background: #475569;
+  }
+
+  /* Plusieurs projets partagent le même emplacement. */
+  .bp-project-dot--multi,
+  .bp-pin--multi {
+    background: linear-gradient(
+      135deg,
+      var(--bp-green) 0 33%,
+      var(--bp-orange) 33% 66%,
+      var(--bp-blue) 66% 100%
+    );
+  }
+
+  .bp-project-dot-icon,
+  .bp-pin-icon {
+    overflow: visible !important;
+  }
+
+  .bp-project-location-count {
+    position: absolute;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border: 2px solid #ffffff;
+    border-radius: 999px;
+    background: var(--bp-navy);
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 900;
+    box-shadow: 0 5px 12px rgba(15, 23, 42, 0.25);
+    pointer-events: none;
+  }
+
+  .bp-project-dot-icon .bp-project-location-count {
+    top: -10px;
+    right: -12px;
+  }
+
+  .bp-pin-icon .bp-project-location-count {
+    top: -7px;
+    right: -8px;
+  }
+
+  .bp-project-group-popup {
+    width: min(420px, calc(100vw - 72px));
+  }
+
+  .bp-project-group-popup__header {
+    padding: 17px 18px 15px;
+    border-bottom: 1px solid rgba(11, 39, 69, 0.10);
+    background: #fff7ed;
+  }
+
+  .bp-project-group-popup__header strong {
+    display: block;
+    color: var(--bp-navy);
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: 900;
+  }
+
+  .bp-project-group-popup__header span {
+    display: block;
+    margin-top: 4px;
+    color: #475569;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .bp-project-group-popup__list {
+    max-height: min(58vh, 540px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .bp-project-group-popup__item {
+    padding: 18px;
+  }
+
+  .bp-project-group-popup__item + .bp-project-group-popup__item {
+    border-top: 1px solid rgba(11, 39, 69, 0.10);
+  }
+
+  .bp-project-group-popup__number {
+    margin-bottom: 9px;
+    color: var(--bp-orange);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .bp-project-group-popup .bp-project-popup {
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 0;
+  }
+
+  .bp-project-group-popup .bp-project-popup::before {
+    display: none;
+  }
+
+  .bp-focus-badge {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    z-index: 850;
+    display: none;
+    max-width: 345px;
+    padding: 14px 16px 15px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.14);
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+  }
+
+  .bp-focus-badge.is-visible {
+    display: block;
+  }
+
+  .bp-focus-badge__tag {
+    display: inline-flex;
+    margin-bottom: 8px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: var(--bp-orange);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .bp-focus-badge h4 {
+    margin: 0 0 5px;
+    color: var(--bp-navy);
+    font-size: 22px;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .bp-focus-badge p {
+    margin: 0;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .bp-global-view-button {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 860;
+    display: none;
+    border: 0;
+    padding: 11px 16px;
+    border-radius: 999px;
+    background: rgba(11, 39, 69, 0.94);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.20);
+    backdrop-filter: blur(10px);
+  }
+
+  .bp-global-view-button.is-visible {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bp-project-popup {
+    min-width: 260px;
+    max-width: 340px;
+  }
+
+  .bp-project-popup h3 {
+    margin: 0 0 8px;
+    color: var(--bp-navy);
+    font-size: 17px;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+  }
+
+  .bp-project-popup p {
+    margin: 0 0 10px;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .bp-project-popup__meta {
+    margin-bottom: 10px;
+    padding: 11px;
+    border-radius: 13px;
+    background: #fff7ed;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .bp-project-popup__meta strong {
+    color: var(--bp-navy);
+  }
+
+  .bp-project-popup a {
+    display: inline-block;
+    padding: 9px 11px;
+    border-radius: 11px;
+    background: var(--bp-navy);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 12px;
+  }
+
+  #bpLeafletMap .leaflet-popup-content-wrapper {
+    border-radius: 18px;
+    box-shadow: 0 22px 58px rgba(15, 23, 42, 0.22);
+  }
+
+  #bpLeafletMap .leaflet-popup-content {
+    margin: 15px;
+  }
+
+  .bp-map-attribution {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    z-index: 700;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: rgba(11, 39, 69, 0.58);
+    font-size: 10px;
+    pointer-events: auto;
+    backdrop-filter: blur(6px);
+  }
+
+  .bp-map-attribution a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  @media (max-width: 980px) {
+    .bp-explore-inner {
+      grid-template-columns: 1fr;
+      gap: 42px;
+    }
+
+    .bp-map-legend {
+      max-width: none;
+    }
+
+    .bp-map-stage {
+      height: 580px;
+    }
+
+    .bp-focus-badge,
+    .bp-global-view-button {
+      top: 16px;
+    }
+
+    .bp-focus-badge {
+      left: 16px;
+    }
+
+    .bp-global-view-button {
+      right: 16px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bp-explore-section {
+      padding: 54px 18px 70px;
+    }
+
+    .bp-explore-left h2 {
+      font-size: 2.8rem;
+    }
+
+    .bp-map-stage {
+      height: 500px;
+    }
+
+    #bpLeafletMap svg path.bp-stack-shadow-wide {
+      display: none;
+    }
+
+    #bpLeafletMap svg path.bp-stack-shadow-contact {
+      filter: blur(4px);
+    }
+
+    .bp-map-attribution {
+      right: 7px;
+      bottom: 6px;
+      max-width: calc(100% - 14px);
+      font-size: 8px;
+      line-height: 1.2;
+    }
+  }
+
+  /* ================================
+     LAB MISE EN PAGE + CARTES PINS
+     ================================ */
+
+  .bp-explore-section {
+    --bp-lab-section-pad-top: 96px;
+    --bp-lab-section-pad-bottom: 96px;
+    --bp-lab-section-pad-y: 88px;
+    --bp-lab-section-pad-x: clamp(20px, 5vw, 86px);
+    --bp-lab-inner-max: 1520px;
+    --bp-lab-left-width: 380px;
+    --bp-lab-gap: 90px;
+    --bp-lab-map-height: clamp(560px, 58vw, 780px);
+    --bp-lab-map-radius: 0px;
+    --bp-lab-map-shadow: none;
+    --bp-lab-title-scale: 1;
+
+    --bp-lab-overlay-left: 28px;
+    --bp-lab-overlay-top: 28px;
+    --bp-lab-overlay-width: 390px;
+    --bp-lab-overlay-padding: 26px;
+    --bp-lab-overlay-radius: 28px;
+    --bp-lab-overlay-bg: rgba(255, 255, 255, 0.92);
+    --bp-lab-overlay-shadow: 0 26px 70px rgba(15, 23, 42, 0.16);
+
+    --bp-popup-bg: #ffffff;
+    --bp-popup-radius: 24px;
+    --bp-popup-padding: 18px;
+    --bp-popup-title-size: 18px;
+    --bp-popup-desc-size: 13px;
+    --bp-popup-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+    --bp-popup-meta-bg: #fff7ed;
+    --bp-popup-button-bg: var(--bp-navy);
+    --bp-popup-button-radius: 13px;
+
+    padding:
+      var(--bp-lab-section-pad-top)
+      var(--bp-lab-section-pad-x)
+      var(--bp-lab-section-pad-bottom);
+  }
+
+  .bp-explore-inner {
+    max-width: var(--bp-lab-inner-max);
+    grid-template-columns: minmax(270px, var(--bp-lab-left-width)) minmax(0, 1fr);
+    gap: var(--bp-lab-gap);
+  }
+
+  .bp-explore-left h2 {
+    font-size: calc(clamp(2.45rem, 4.35vw, 4.35rem) * var(--bp-lab-title-scale));
+  }
+
+  .bp-map-stage {
+    height: var(--bp-lab-map-height);
+    border-radius: var(--bp-lab-map-radius);
+    box-shadow: var(--bp-lab-map-shadow);
+  }
+
+  .bp-layout--wide .bp-explore-inner {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .bp-layout--wide .bp-explore-left {
+    max-width: min(100%, 1120px);
+  }
+
+  .bp-layout--wide .bp-explore-left p {
+    max-width: 760px;
+  }
+
+  .bp-layout--wide .bp-map-legend {
+    max-width: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .bp-layout--wide .bp-map-legend-title {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .bp-layout--wide .bp-legend-item {
+    margin-bottom: 0;
+  }
+
+  .bp-layout--overlay .bp-explore-inner {
+    position: relative;
+    display: block;
+  }
+
+  .bp-layout--overlay .bp-map-right {
+    width: 100%;
+  }
+
+  .bp-layout--overlay .bp-explore-left {
+    position: absolute;
+    left: var(--bp-lab-overlay-left);
+    top: var(--bp-lab-overlay-top);
+    z-index: 930;
+    width: min(var(--bp-lab-overlay-width), calc(100% - 56px));
+    padding: var(--bp-lab-overlay-padding);
+    border-radius: var(--bp-lab-overlay-radius);
+    background: var(--bp-lab-overlay-bg);
+    box-shadow: var(--bp-lab-overlay-shadow);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(11, 39, 69, 0.08);
+  }
+
+  .bp-layout--overlay .bp-map-stage {
+    min-height: 720px;
+  }
+
+  .bp-layout--compact .bp-explore-inner {
+    grid-template-columns: minmax(240px, var(--bp-lab-left-width)) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .bp-layout--compact .bp-map-legend {
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .bp-layout--compact .bp-map-filters {
+    margin: 22px 0 18px;
+  }
+
+  .bp-layout--compact .bp-explore-left h2 {
+    margin-bottom: 16px;
+  }
+
+  #bpLeafletMap .bp-project-leaflet-popup .leaflet-popup-content-wrapper {
+    border-radius: var(--bp-popup-radius);
+    background: var(--bp-popup-bg);
+    box-shadow: var(--bp-popup-shadow);
+    overflow: hidden;
+  }
+
+  #bpLeafletMap .bp-project-leaflet-popup .leaflet-popup-tip {
+    background: var(--bp-popup-bg);
+  }
+
+  #bpLeafletMap .bp-project-leaflet-popup .leaflet-popup-content {
+    margin: 0;
+  }
+
+  #bpLeafletMap .bp-project-leaflet-popup a.leaflet-popup-close-button {
+    top: 9px;
+    right: 9px;
+    width: 27px;
+    height: 27px;
+    border-radius: 999px;
+    background: rgba(11, 39, 69, 0.08);
+    color: var(--bp-navy);
+    font-size: 18px;
+    line-height: 27px;
+  }
+
+  .bp-project-popup {
+    width: var(--bp-popup-inner-width, 320px);
+    min-width: 0;
+    max-width: none;
+    padding: var(--bp-popup-padding);
+  }
+
+  .bp-project-popup__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 0 30px 11px 0;
+  }
+
+  .bp-project-popup__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #fff7ed;
+    color: #9a4e00;
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .bp-project-popup__pill--status {
+    background: rgba(101, 168, 63, 0.14);
+    color: #3f7924;
+  }
+
+  .bp-project-popup h3 {
+    margin: 0 0 10px;
+    color: var(--bp-navy);
+    font-size: var(--bp-popup-title-size);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  .bp-project-popup p {
+    margin: 0 0 13px;
+    color: #475569;
+    font-size: var(--bp-popup-desc-size);
+    line-height: 1.52;
+  }
+
+  .bp-project-popup__meta {
+    margin-bottom: 13px;
+    padding: 12px;
+    border-radius: 15px;
+    background: var(--bp-popup-meta-bg);
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .bp-project-popup__meta div + div {
+    margin-top: 4px;
+  }
+
+  .bp-project-popup__meta strong {
+    color: var(--bp-navy);
+  }
+
+  .bp-project-popup__cta {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 13px;
+    border-radius: var(--bp-popup-button-radius);
+    background: var(--bp-popup-button-bg);
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: 950;
+    font-size: 12px;
+  }
+
+  .bp-card-style-compact .bp-project-popup {
+    --bp-popup-inner-width: 270px;
+  }
+
+  .bp-card-style-compact .bp-project-popup__eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .bp-card-style-compact .bp-project-popup__meta {
+    display: none;
+  }
+
+  .bp-card-style-compact .bp-project-popup p {
+    margin-bottom: 11px;
+  }
+
+  .bp-card-style-magazine .bp-project-popup {
+    --bp-popup-inner-width: 380px;
+    padding-top: 24px;
+  }
+
+  .bp-card-style-magazine .bp-project-popup::before {
+    content: "";
+    display: block;
+    height: 8px;
+    margin: -24px -24px 18px;
+    background: linear-gradient(90deg, #f47a00, #fba746, #65a83f);
+  }
+
+  .bp-card-style-magazine .bp-project-popup h3 {
+    font-size: calc(var(--bp-popup-title-size) + 4px);
+  }
+
+  .bp-card-style-glass .leaflet-popup-content-wrapper {
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(16px);
+  }
+
+  .bp-card-style-glass .leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.82) !important;
+  }
+
+  .bp-card-style-glass .bp-project-popup__meta {
+    background: rgba(255, 247, 237, 0.68);
+  }
+
+  .bp-card-style-ticket .bp-project-popup {
+    --bp-popup-inner-width: 330px;
+  }
+
+  .bp-card-style-ticket .leaflet-popup-content-wrapper {
+    border: 1px dashed rgba(244, 122, 0, 0.35);
+  }
+
+  .bp-card-style-ticket .bp-project-popup__cta {
+    width: 100%;
+  }
+
+  @media (max-width: 980px) {
+    .bp-layout--overlay .bp-explore-left {
+      position: relative;
+      left: auto;
+      top: auto;
+      width: auto;
+      margin-bottom: 22px;
+    }
+  }
+
+
+  #bpLeafletMap .leaflet-projects-pane {
+    z-index: 1250 !important;
+    pointer-events: auto;
+  }
+
+  #bpLeafletMap .leaflet-marker-pane {
+    z-index: 1240 !important;
+  }
+
+  #bpLeafletMap .leaflet-popup-pane {
+    z-index: 1400 !important;
+  }
+
+  #bpLeafletMap .leaflet-tooltip-pane {
+    z-index: 1420 !important;
+  }
+
+  #bpLeafletMap .leaflet-projects-pane .leaflet-marker-icon {
+    z-index: 1255 !important;
+  }
+
+
+  /* ================================
+     BADGES QUARTIERS + RESPONSIVE MOBILE
+     ================================ */
+
+  #bpLeafletMap .leaflet-labels-pane {
+    z-index: 1180 !important;
+    pointer-events: auto;
+  }
+
+  #bpLeafletMap .leaflet-labels-pane .leaflet-marker-icon {
+    pointer-events: auto;
+  }
+
+  .bp-district-badge-icon {
+    background: transparent !important;
+    border: 0 !important;
+  }
+
+  .bp-district-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 138px;
+    min-height: 25px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(244, 122, 0, 0.32);
+    box-shadow:
+      0 8px 18px rgba(15, 23, 42, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    color: rgba(11, 39, 69, 0.78);
+    font-size: 10px;
+    font-weight: 950;
+    line-height: 1.05;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    text-align: center;
+    white-space: normal;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    transition:
+      opacity 0.18s ease,
+      transform 0.18s ease,
+      background 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .bp-district-label::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    margin-right: 6px;
+    border-radius: 999px;
+    background: var(--bp-orange);
+    box-shadow: 0 0 0 3px rgba(244, 122, 0, 0.12);
+  }
+
+  .bp-district-badge-icon:hover .bp-district-label,
+  .bp-district-badge-icon.is-active .bp-district-label {
+    background: rgba(255, 247, 237, 0.96);
+    border-color: rgba(244, 122, 0, 0.72);
+    color: var(--bp-navy);
+    transform: translateY(-1px);
+    box-shadow:
+      0 12px 26px rgba(15, 23, 42, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .bp-district-badge-icon.is-dimmed .bp-district-label {
+    opacity: 0.45;
+    transform: scale(0.94);
+  }
+
+  #bpLeafletMap.is-focus-mode .bp-district-label {
+    opacity: 1 !important;
+  }
+
+  #bpLeafletMap.is-focus-mode .bp-district-badge-icon.is-active .bp-district-label {
+    opacity: 1 !important;
+  }
+
+  @media (max-width: 980px) {
+    .bp-explore-section {
+      padding: 64px 20px var(--bp-lab-section-pad-bottom) !important;
+      overflow: visible;
+    }
+
+    .bp-explore-inner {
+      max-width: 100% !important;
+      grid-template-columns: 1fr !important;
+      gap: 26px !important;
+      align-items: stretch;
+    }
+
+    .bp-explore-left {
+      width: 100%;
+      max-width: none;
+    }
+
+    .bp-explore-left h2 {
+      max-width: 760px;
+      font-size: clamp(2.15rem, 8vw, 3.65rem) !important;
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin-bottom: 16px;
+    }
+
+    .bp-explore-left h3 {
+      max-width: 720px;
+      font-size: clamp(1.05rem, 3.4vw, 1.35rem);
+      margin-bottom: 12px;
+    }
+
+    .bp-explore-left p {
+      max-width: 680px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .bp-map-filters {
+      max-width: 720px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 22px 0 18px;
+    }
+
+    .bp-map-legend {
+      max-width: 720px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px;
+      border-radius: 20px;
+      margin-top: 18px;
+    }
+
+    .bp-map-legend-title {
+      grid-column: 1 / -1;
+      margin-bottom: 0;
+    }
+
+    .bp-legend-item {
+      grid-template-columns: 28px 1fr;
+      gap: 9px;
+      margin-bottom: 0;
+    }
+
+    .bp-legend-text strong {
+      font-size: 13px;
+    }
+
+    .bp-legend-text span {
+      font-size: 11px;
+    }
+
+    .bp-map-right {
+      overflow: visible;
+      contain: none;
+    }
+
+    .bp-map-stage {
+      height: min(72vh, 680px) !important;
+      min-height: 520px;
+      border-radius: 26px !important;
+      overflow: hidden;
+    }
+
+    .bp-project-popup {
+      width: min(var(--bp-popup-inner-width, 320px), calc(100vw - 72px));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bp-explore-section {
+      padding: 48px 14px var(--bp-lab-section-pad-bottom) !important;
+    }
+
+    .bp-explore-left h2 {
+      font-size: clamp(2rem, 12vw, 3rem) !important;
+    }
+
+    .bp-map-filters {
+      grid-template-columns: 1fr;
+    }
+
+    .bp-filter-field,
+    .bp-filter-field select,
+    .bp-filter-field input {
+      min-height: 44px;
+      height: 44px;
+      font-size: 13px;
+    }
+
+    .bp-map-legend {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .bp-map-stage {
+      height: 68vh !important;
+      min-height: 460px;
+      border-radius: 22px !important;
+    }
+
+    .bp-focus-badge {
+      top: 12px;
+      left: 12px;
+      max-width: calc(100% - 120px);
+      padding: 9px 12px;
+      font-size: 12px;
+    }
+
+    .bp-global-view-button {
+      top: 12px;
+      right: 12px;
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .bp-district-label {
+      max-width: 104px;
+      min-height: 22px;
+      padding: 5px 7px;
+      font-size: 8px;
+      letter-spacing: 0.01em;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10);
+    }
+
+    .bp-district-label::before {
+      width: 5px;
+      height: 5px;
+      flex-basis: 5px;
+      margin-right: 5px;
+      box-shadow: 0 0 0 2px rgba(244, 122, 0, 0.10);
+    }
+
+    #bpLeafletMap.is-focus-mode .bp-district-badge-icon.is-dimmed {
+      display: none !important;
+    }
+
+    #bpLeafletMap .bp-project-leaflet-popup .leaflet-popup-content-wrapper {
+      max-width: calc(100vw - 34px);
+    }
+
+    .bp-project-popup {
+      width: min(var(--bp-popup-inner-width, 320px), calc(100vw - 64px));
+      padding: 14px;
+    }
+
+    .bp-project-popup h3 {
+      font-size: min(var(--bp-popup-title-size), 20px);
+    }
+
+    .bp-project-popup__meta {
+      padding: 10px;
+      font-size: 11px;
+    }
+
+    .bp-project-popup__eyebrow {
+      gap: 5px;
+      margin-right: 26px;
+    }
+
+    .bp-project-popup__pill {
+      padding: 5px 7px;
+      font-size: 9px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .bp-map-stage {
+      height: 64vh !important;
+      min-height: 420px;
+    }
+
+    .bp-map-hint {
+      font-size: 12px;
+    }
+
+    .bp-district-label {
+      max-width: 86px;
+      font-size: 7.5px;
+      padding: 4px 6px;
+    }
+  }
+
+
+  /* Carte flottante "Quartier sélectionné" supprimée : le zoom et les badges quartiers restent actifs. */
+  .bp-focus-badge {
+    display: none !important;
+  }
+
+
+  /* Badges quartiers : cachés en vue globale, visibles uniquement en focus actif. */
+  .bp-district-badge-icon.is-hidden {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  .bp-district-label::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .bp-district-label {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  #bpLeafletMap:not(.is-focus-mode) .bp-district-badge-icon {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  #bpLeafletMap.is-focus-mode .bp-district-badge-icon:not(.is-active) {
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+
+  /* =========================================================
+     HARMONISATION TYPOGRAPHIQUE AVEC LE HERO BP PREMIUM
+     ========================================================= */
+
+  .bp-explore-section,
+  .bp-explore-section button,
+  .bp-explore-section input,
+  .bp-explore-section select,
+  .bp-explore-section textarea {
+    font-family: sans-serif !important;
+  }
+
+  .bp-explore-left h2 {
+    margin: 0 0 20px !important;
+    color: #070707 !important;
+    font-size: clamp(40px, 4.15vw, 54px) !important;
+    line-height: 0.92 !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.045em !important;
+  }
+
+  .bp-explore-left h3 {
+    margin: 0 0 14px !important;
+    color: #ef7200 !important;
+    font-size: clamp(17px, 1.2vw, 21px) !important;
+    line-height: 1.18 !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  .bp-explore-left > p {
+    margin: 0 !important;
+    max-width: 553px !important;
+    color: #171717 !important;
+    font-size: clamp(16px, 1.02vw, 18px) !important;
+    line-height: 1.38 !important;
+    font-weight: 400 !important;
+  }
+
+  .bp-filter-field select,
+  .bp-filter-field input {
+    color: #08233f !important;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    font-weight: 600 !important;
+  }
+
+  .bp-filter-field input::placeholder {
+    color: rgba(8, 35, 63, 0.52) !important;
+    font-weight: 500 !important;
+  }
+
+  .bp-map-legend-title {
+    color: #08233f !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.055em !important;
+  }
+
+  .bp-legend-text strong {
+    color: #08233f !important;
+    font-size: 15px !important;
+    line-height: 1.12 !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.015em !important;
+  }
+
+  .bp-legend-text span {
+    color: rgba(8, 35, 63, 0.64) !important;
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    font-weight: 500 !important;
+  }
+
+  .bp-map-hint {
+    color: rgba(8, 35, 63, 0.64) !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    font-weight: 600 !important;
+  }
+
+  .bp-district-label {
+    color: #08233f !important;
+    font-family: sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.015em !important;
+  }
+
+  .bp-global-view-button {
+    font-family: sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .bp-project-popup,
+  .bp-project-popup * {
+    font-family: sans-serif !important;
+  }
+
+  .bp-project-popup__pill {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .bp-project-popup h3 {
+    color: #08233f !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  .bp-project-popup p,
+  .bp-project-popup__meta {
+    color: #171717 !important;
+    font-weight: 400 !important;
+  }
+
+  .bp-project-popup__meta strong {
+    color: #08233f !important;
+    font-weight: 800 !important;
+  }
+
+  .bp-project-popup__cta {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .bp-map-attribution {
+    font-family: sans-serif !important;
+    font-weight: 500 !important;
+  }
+
+  @media (max-width: 980px) {
+    .bp-explore-left h2 {
+      font-size: clamp(38px, 8vw, 54px) !important;
+      line-height: 0.96 !important;
+    }
+
+    .bp-explore-left > p {
+      max-width: 560px !important;
+      font-size: 17px !important;
+      line-height: 1.42 !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .bp-explore-left h2 {
+      font-size: 32px !important;
+      line-height: 0.98 !important;
+      letter-spacing: -0.04em !important;
+    }
+
+    .bp-explore-left h3 {
+      font-size: 17px !important;
+    }
+
+    .bp-explore-left > p {
+      font-size: 15px !important;
+      line-height: 1.42 !important;
+    }
+
+    .bp-filter-field select,
+    .bp-filter-field input {
+      font-size: 14px !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .bp-explore-left h2 {
+      font-size: 29px !important;
+      letter-spacing: -0.035em !important;
+    }
+
+    .bp-explore-left > p {
+      font-size: 14px !important;
+    }
+  }
+
+</style>
+<section class="bp-explore-section">
+<div class="bp-explore-inner">
+<div class="bp-explore-left">
+<h2>Venez découvrir<br />
+les projets près<br />
+de chez vous</h2>
+
+<h3>Explorez Saint-Denis quartier par quartier</h3>
+
+<p>Cette carte interactive vous permet de visualiser les projets du budget participatif selon leur état d’avancement.</p>
+
+<div class="bp-map-filters">
+<div class="bp-filter-field bp-filter-field--select"><select id="editionFilter"><option value="all">Toutes les éditions</option> </select></div>
+
+<div class="bp-filter-field"><input id="searchInput" placeholder="Rechercher un projet, une catégorie..." type="text" /></div>
+</div>
+
+<div class="bp-map-legend">
+<div class="bp-map-legend-title">LÉGENDE</div>
+
+<div class="bp-legend-item"><span class="bp-legend-pin bp-legend-pin--done"></span>
+
+<div class="bp-legend-text"><strong>Réalisé</strong> <span>Projet terminé</span></div>
+</div>
+
+<div class="bp-legend-item"><span class="bp-legend-pin bp-legend-pin--progress"></span>
+
+<div class="bp-legend-text"><strong>En cours</strong> <span>Réalisation en cours</span></div>
+</div>
+
+<div class="bp-legend-item"><span class="bp-legend-pin bp-legend-pin--study"></span>
+
+<div class="bp-legend-text"><strong>En étude</strong> <span>Projet en cours d’étude</span></div>
+</div>
+</div>
+
+<div class="bp-map-hint">Clique sur un quartier pour afficher ses projets.</div>
+</div>
+
+<div class="bp-map-right">
+<div class="bp-map-stage">
+<div id="bpLeafletMap">&nbsp;</div>
+<button class="bp-global-view-button" id="globalViewButton" type="button">Vue globale</button>
+
+<div class="bp-map-attribution"><a href="https://openfreemap.org/" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> · © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a></div>
+</div>
+</div>
+</div>
+</section>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.20/leaflet-maplibre-gl.js"></script>
+<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* Masque le titre natif "Carte Budget Participatif" du bloc hôte. */
+  (function hideNativeMapSectionTitle() {
+    const scriptNode = document.currentScript;
+    const normalizedTargets = [
+      'carte budget participatif',
+      'carte du budget participatif',
+      'budget participatif'
+    ];
+
+    function cleanText(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    function getDirectContainer(section) {
+      if (!section) return null;
+
+      return Array.from(section.children).find(function (child) {
+        return child.classList && child.classList.contains('container');
+      }) || null;
+    }
+
+    function titleMatches(node) {
+      if (!node || node.tagName !== 'H2') return false;
+      const title = cleanText(node.textContent);
+
+      return normalizedTargets.some(function (target) {
+        return title === target || title.includes(target);
+      });
+    }
+
+    function hardHide(node) {
+      if (!node) return;
+
+      node.style.setProperty('display', 'none', 'important');
+      node.style.setProperty('visibility', 'hidden', 'important');
+      node.style.setProperty('height', '0', 'important');
+      node.style.setProperty('min-height', '0', 'important');
+      node.style.setProperty('max-height', '0', 'important');
+      node.style.setProperty('margin', '0', 'important');
+      node.style.setProperty('padding', '0', 'important');
+      node.style.setProperty('line-height', '0', 'important');
+      node.style.setProperty('overflow', 'hidden', 'important');
+      node.setAttribute('aria-hidden', 'true');
+    }
+
+    function findHost() {
+      if (scriptNode) {
+        const directHost =
+          scriptNode.closest('section.section--custom.home-page-section.old-editor') ||
+          scriptNode.closest('section.section--custom');
+
+        if (directHost) return directHost;
+      }
+
+      const mapSection = document.querySelector('.bp-explore-section');
+      return mapSection
+        ? mapSection.closest('section.section--custom.home-page-section.old-editor, section.section--custom')
+        : null;
+    }
+
+    function apply() {
+      const host = findHost();
+      if (!host) return;
+
+      const container = getDirectContainer(host);
+      if (!container) return;
+
+      host.classList.add('bp-map-custom-host');
+
+      Array.from(container.children).forEach(function (child) {
+        if (titleMatches(child)) hardHide(child);
+      });
+    }
+
+    apply();
+
+    if (window.MutationObserver && document.body) {
+      const observer = new MutationObserver(apply);
+      observer.observe(document.body, { childList: true, subtree: true });
+      window.setTimeout(function () { observer.disconnect(); }, 12000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', apply, { once: true });
+    }
+  })();
+
+  /* Version officielle - badge quartier uniquement en focus, sans pastille, responsive mobile */
+  const projectsUrl = 'https://raw.githubusercontent.com/analyst-dan-inc/budget-participatif-carte/main/carte-projets-bp.json';
+  const districtsUrl = 'https://data.regionreunion.com/api/explore/v2.1/catalog/datasets/les-20-quartiers-villesaintdenis/exports/geojson?lang=fr&timezone=Asia%2FDubai';
+
+  const leafletMapElement = document.getElementById('bpLeafletMap');
+  const editionFilter = document.getElementById('editionFilter');
+  const searchInput = document.getElementById('searchInput');
+  const focusBadge = null;
+  const focusDistrictName = null;
+  const globalViewButton = document.getElementById('globalViewButton');
+  const exploreSection = document.querySelector('.bp-explore-section');
+  const mapAttribution = document.querySelector('.bp-map-attribution');
+
+  const BP_DEFAULT_SETTINGS = {
+    globalFillColor: "#e8f0d9",
+    globalFillOpacity: 0,
+    globalStrokeColor: "#f59e2e",
+    globalStrokeWeight: 2.4,
+    globalStrokeOpacity: 0.84,
+    borderColor: "#f59e2e",
+    borderWeight: 1.3,
+    borderOpacity: 0.48,
+    hoverFillColor: "#f6ac55",
+    hoverFillOpacity: 0.47,
+    hoverStrokeColor: "#f47a00",
+    hoverStrokeWeight: 2.3,
+    hoverStrokeOpacity: 1,
+    activeFillColor: "#fec990",
+    activeFillOpacity: 0.26,
+    activeStrokeColor: "#fba746",
+    activeStrokeWeight: 3.4,
+    activeStrokeOpacity: 1,
+    dimFillColor: "#ffffff",
+    dimFillOpacity: 0.16,
+    dimStrokeColor: "#f3b46b",
+    dimStrokeWeight: 2.9,
+    dimStrokeOpacity: 0.43,
+    reliefMethod: "leafletPolygonDifferenceStable",
+    reliefX: -8.5,
+    reliefY: 5.5,
+    midDepth: 0.38,
+    endDepth: 0.74,
+    shadowDepth: 1.08,
+    midColor: "#efad55",
+    midOpacity: 0.54,
+    endColor: "#c87524",
+    endOpacity: 0.42,
+    shadowColor: "#7c4615",
+    shadowOpacity: 0.4,
+    shadowBlur: 0,
+    /* Palette pastel : colorée comme Voyager, mais assez douce pour les contours orange. */
+    tileSaturate: 1,
+    tileBrightness: 1,
+    tileContrast: 1,
+    reliefPaneZIndex: 650,
+    districtPaneZIndex: 760,
+    zoomSync: "stable",
+    dotSize: 11,
+    dotBorder: 2,
+    pinScale: 0.71,
+    focusPinScale: 1.07,
+    zoomOneProject: 14.55,
+    zoomFewProjects: 14.4,
+    zoomMediumProjects: 14.8,
+    zoomManyProjects: 15.25,
+    zoomFallback: 15.4,
+    flyDuration: 0.1
+  };
+
+  const BP_MAP_SETTINGS = { ...BP_DEFAULT_SETTINGS };
+
+  const BP_LAYOUT_DEFAULTS = {
+    layoutPreset: "custom",
+    layoutMode: "split",
+    sectionPadTop: 96, // espace au-dessus du contenu de la section carte
+    sectionPadBottom: 96, // espace sous le contenu de la section carte
+    sectionPadY: 30,
+    sectionPadX: 65,
+    innerMax: 1620,
+    leftWidth: 520,
+    gap: 56,
+    mapHeight: 795,
+    mapRadius: 33,
+    mapShadow: 0,
+    titleScale: 0.81,
+    overlayWidth: 405,
+    overlayPadding: 27,
+    overlayRadius: 29,
+    popupPreset: "ticket",
+    popupMaxWidth: 360,
+    popupRadius: 25,
+    popupPadding: 16,
+    popupTitleSize: 23,
+    popupDescSize: 11,
+    popupShadow: 0.17,
+    popupMetaStyle: "soft",
+    popupButtonStyle: "orange",
+    popupBodyChars: 215,
+    showQuartier: "yes",
+    showAddress: "no",
+    showCategory: "yes",
+    showEdition: "yes",
+    showStatus: "yes",
+    buttonText: "Découvrir le projet"
+  };
+
+  const BP_LAYOUT_SETTINGS = { ...BP_LAYOUT_DEFAULTS };
+
+
+  let map = null;
+  let basemapLayer = null;
+  let allProjects = [];
+  let districtsGeojson = null;
+  let districtLayer = null;
+  let districtBorderLayer = null;
+  let projectLayer = null;
+  let labelLayer = null;
+  let activeDistrictFeature = null;
+  let activeDistrictLayer = null;
+  let reliefLayers = [];
+  let reliefRenderRaf = null;
+  let districtLabelMarkers = new Map();
+  let projectsByDistrictKey = new Map();
+  let projectMarkers = [];
+
+  function normalizeText(value) {
+    return String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase();
+  }
+
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function truncateText(text, maxLength = 190) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    return clean.length > maxLength ? clean.slice(0, maxLength).trim() + '…' : clean;
+  }
+
+  function getSafeUrl(url) {
+    const value = String(url || '').trim();
+    return /^https?:\/\//i.test(value) ? value : '#';
+  }
+
+  function debounce(callback, delay = 180) {
+    let timer = null;
+
+    return function debouncedCallback() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(callback, delay);
+    };
+  }
+
+  function setCssVar(name, value, suffix = '') {
+    leafletMapElement.style.setProperty(name, `${value}${suffix}`);
+  }
+
+  function updateCssVariables() {
+    setCssVar('--bp-dot-size', BP_MAP_SETTINGS.dotSize, 'px');
+    setCssVar('--bp-dot-border', BP_MAP_SETTINGS.dotBorder, 'px');
+    setCssVar('--bp-pin-scale', BP_MAP_SETTINGS.pinScale);
+    setCssVar('--bp-focus-pin-scale', BP_MAP_SETTINGS.focusPinScale);
+
+    if (map) {
+      const basemapPane = map.getPane('basemapPane');
+
+      if (basemapPane) {
+        basemapPane.style.filter = `saturate(${BP_MAP_SETTINGS.tileSaturate}) brightness(${BP_MAP_SETTINGS.tileBrightness}) contrast(${BP_MAP_SETTINGS.tileContrast})`;
+      }
+    }
+  }
+
+  function refreshProjectMarkerStyles() {
+    if (!projectLayer) return;
+
+    if (activeDistrictFeature) {
+      showProjectsForDistrict(activeDistrictFeature);
+      return;
+    }
+
+    renderProjectMarkers(getFilteredProjects(), false);
+  }
+
+  function formatEditionLabel(edition) {
+    const value = String(edition || '').trim().toUpperCase();
+
+    if (value === 'BP1') return 'Édition n°1';
+    if (value === 'BP2') return 'Édition n°2';
+    if (value === 'BP3') return 'Édition n°3';
+    if (value === 'BP4') return 'Édition n°4';
+
+    return edition || 'Édition non renseignée';
+  }
+
+  function getStatusType(statut) {
+    const value = normalizeText(statut);
+
+    if (value.includes('annule')) return 'cancelled';
+
+    if (value.includes('realise') || value.includes('termine') || value.includes('livre')) {
+      return 'done';
+    }
+
+    if (value.includes('etude')) {
+      return 'study';
+    }
+
+    if (value.includes('cours') || value.includes('realisation') || value.includes('travaux')) {
+      return 'progress';
+    }
+
+    return 'default';
+  }
+
+  function getStatusLabel(statut) {
+    const type = getStatusType(statut);
+
+    if (type === 'done') return 'Réalisé';
+    if (type === 'progress') return 'En cours';
+    if (type === 'study') return 'En étude';
+
+    return statut || 'Statut non renseigné';
+  }
+
+  function getDistrictName(feature) {
+    const props = feature.properties || {};
+    const possibleKeys = [
+      'nom_quartier',
+      'NOM_QUARTIER',
+      'nomq',
+      'NOMQ',
+      'libquartier',
+      'LIBQUARTIER',
+      'libelle_quartier',
+      'LIBELLE_QUARTIER',
+      'quartier',
+      'QUARTIER',
+      'libelle',
+      'LIBELLE',
+      'nom',
+      'NOM',
+      'name',
+      'Name'
+    ];
+
+    for (const key of possibleKeys) {
+      if (props[key]) return props[key];
+    }
+
+    const firstTextValue = Object.values(props).find(value => {
+      return typeof value === 'string' && value.trim().length > 0;
+    });
+
+    return firstTextValue || 'Quartier';
+  }
+
+  function cleanDistrictLabel(name) {
+    return String(name || '').replace(/\s+/g, ' ').replace(/_/g, ' ').trim();
+  }
+
+  function getDistrictKey(feature, index) {
+    const props = feature.properties || {};
+
+    if (!props.__bpDistrictKey) {
+      const name = cleanDistrictLabel(getDistrictName(feature));
+      const safeIndex = Number.isFinite(index) ? index : districtsGeojson.features.indexOf(feature);
+      props.__bpDistrictKey = `${name}-${safeIndex}`;
+    }
+
+    return props.__bpDistrictKey;
+  }
+
+  function pointInRing(point, ring) {
+    const x = point[0];
+    const y = point[1];
+    let inside = false;
+
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const xi = ring[i][0];
+      const yi = ring[i][1];
+      const xj = ring[j][0];
+      const yj = ring[j][1];
+
+      const intersect =
+        ((yi > y) !== (yj > y)) &&
+        x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-12) + xi;
+
+      if (intersect) inside = !inside;
+    }
+
+    return inside;
+  }
+
+  function pointInPolygonCoords(point, polygonCoords) {
+    if (!polygonCoords || !polygonCoords.length) return false;
+    if (!pointInRing(point, polygonCoords[0])) return false;
+
+    for (let i = 1; i < polygonCoords.length; i++) {
+      if (pointInRing(point, polygonCoords[i])) return false;
+    }
+
+    return true;
+  }
+
+  function pointInFeature(point, feature) {
+    const geometry = feature.geometry;
+
+    if (!geometry) return false;
+
+    if (geometry.type === 'Polygon') {
+      return pointInPolygonCoords(point, geometry.coordinates);
+    }
+
+    if (geometry.type === 'MultiPolygon') {
+      return geometry.coordinates.some(polygonCoords => {
+        return pointInPolygonCoords(point, polygonCoords);
+      });
+    }
+
+    return false;
+  }
+
+  function projectBelongsToDistrict(project, feature) {
+    const districtName = normalizeText(cleanDistrictLabel(getDistrictName(feature)));
+    const projectDistrict = normalizeText(project.quartier || '');
+
+    const sameDistrictByName =
+      projectDistrict &&
+      districtName &&
+      (projectDistrict.includes(districtName) || districtName.includes(projectDistrict));
+
+    if (sameDistrictByName) return true;
+
+    const lng = Number(project.lng);
+    const lat = Number(project.lat);
+
+    if (!Number.isFinite(lng) || !Number.isFinite(lat)) return false;
+
+    return pointInFeature([lng, lat], feature);
+  }
+
+  function projectMatchesFilters(project) {
+    const selectedEdition = editionFilter.value;
+    const searchTerm = normalizeText(searchInput.value);
+
+    const editionMatch =
+      selectedEdition === 'all' ||
+      String(project.edition_bp || '').trim() === selectedEdition;
+
+    if (!editionMatch) return false;
+    if (!searchTerm) return true;
+
+    const searchable = normalizeText([
+      project.title,
+      project.quartier,
+      project.category,
+      project.formatted_address,
+      project.bodyText,
+      project.statut,
+      project.edition_bp,
+      formatEditionLabel(project.edition_bp)
+    ].join(' '));
+
+    return searchable.includes(searchTerm);
+  }
+
+  function getFilteredProjects() {
+    return allProjects.filter(projectMatchesFilters);
+  }
+
+  function getProjectsForDistrict(feature, applyFilters = true) {
+    const key = getDistrictKey(feature);
+    const projects = projectsByDistrictKey.get(key) || [];
+
+    return applyFilters ? projects.filter(projectMatchesFilters) : projects;
+  }
+
+  function populateEditionFilter(projects) {
+    const editions = [...new Set(
+      projects
+        .map(project => String(project.edition_bp || '').trim())
+        .filter(Boolean)
+    )].sort((a, b) => {
+      const aNum = parseInt(a.replace(/\D/g, ''), 10) || 0;
+      const bNum = parseInt(b.replace(/\D/g, ''), 10) || 0;
+      return aNum - bNum;
+    });
+
+    editionFilter.innerHTML = '<option value="all">Toutes les éditions</option>';
+
+    editions.forEach(edition => {
+      const option = document.createElement('option');
+      option.value = edition;
+      option.textContent = formatEditionLabel(edition);
+      editionFilter.appendChild(option);
+    });
+  }
+
+  function buildProjectsByDistrictIndex() {
+    projectsByDistrictKey.clear();
+
+    districtsGeojson.features.forEach((feature, index) => {
+      const key = getDistrictKey(feature, index);
+      const matchingProjects = allProjects.filter(project => projectBelongsToDistrict(project, feature));
+      projectsByDistrictKey.set(key, matchingProjects);
+    });
+  }
+
+  function districtBaseStyle() {
+    return {
+      pane: 'districtPane',
+      className: 'bp-district-shape',
+      fillColor: BP_MAP_SETTINGS.globalFillColor,
+      fillOpacity: BP_MAP_SETTINGS.globalFillOpacity,
+      color: BP_MAP_SETTINGS.globalStrokeColor,
+      weight: BP_MAP_SETTINGS.globalStrokeWeight,
+      opacity: BP_MAP_SETTINGS.globalStrokeOpacity,
+      interactive: true,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function districtHoverStyle() {
+    return {
+      fillColor: BP_MAP_SETTINGS.hoverFillColor,
+      fillOpacity: BP_MAP_SETTINGS.hoverFillOpacity,
+      color: BP_MAP_SETTINGS.hoverStrokeColor,
+      weight: BP_MAP_SETTINGS.hoverStrokeWeight,
+      opacity: BP_MAP_SETTINGS.hoverStrokeOpacity,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function districtActiveStyle() {
+    return {
+      pane: 'districtPane',
+      className: 'bp-stack-active',
+      fillColor: BP_MAP_SETTINGS.activeFillColor,
+      fillOpacity: BP_MAP_SETTINGS.activeFillOpacity,
+      color: BP_MAP_SETTINGS.activeStrokeColor,
+      weight: BP_MAP_SETTINGS.activeStrokeWeight,
+      opacity: BP_MAP_SETTINGS.activeStrokeOpacity,
+      interactive: true,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function districtDimmedStyle() {
+    return {
+      fillColor: BP_MAP_SETTINGS.dimFillColor,
+      fillOpacity: BP_MAP_SETTINGS.dimFillOpacity,
+      color: BP_MAP_SETTINGS.dimStrokeColor,
+      weight: BP_MAP_SETTINGS.dimStrokeWeight,
+      opacity: BP_MAP_SETTINGS.dimStrokeOpacity,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function districtBorderStyle(feature) {
+    if (!activeDistrictFeature) {
+      return {
+        pane: 'districtBorderPane',
+        fillOpacity: 0,
+        color: BP_MAP_SETTINGS.borderColor,
+        weight: BP_MAP_SETTINGS.borderWeight,
+        opacity: BP_MAP_SETTINGS.borderOpacity,
+        interactive: false,
+        lineJoin: 'round',
+        lineCap: 'round'
+      };
+    }
+
+    const activeKey = getDistrictKey(activeDistrictFeature);
+    const currentKey = getDistrictKey(feature);
+
+    if (activeKey === currentKey) {
+      return {
+        pane: 'districtBorderPane',
+        fillOpacity: 0,
+        color: BP_MAP_SETTINGS.activeStrokeColor,
+        weight: Math.max(1, BP_MAP_SETTINGS.activeStrokeWeight * 0.22),
+        opacity: BP_MAP_SETTINGS.activeStrokeOpacity,
+        interactive: false,
+        lineJoin: 'round',
+        lineCap: 'round'
+      };
+    }
+
+    return {
+      pane: 'districtBorderPane',
+      fillOpacity: 0,
+      color: BP_MAP_SETTINGS.dimStrokeColor,
+      weight: BP_MAP_SETTINGS.dimStrokeWeight,
+      opacity: BP_MAP_SETTINGS.dimStrokeOpacity,
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function shadowWideContourStyle() {
+    return {
+      pane: 'stackShadowWidePane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.shadowWideColor,
+      weight: BP_MAP_SETTINGS.shadowWideWeight,
+      opacity: BP_MAP_SETTINGS.shadowWideOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-shadow-wide',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function shadowContactContourStyle() {
+    return {
+      pane: 'stackShadowContactPane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.shadowContactColor,
+      weight: BP_MAP_SETTINGS.shadowContactWeight,
+      opacity: BP_MAP_SETTINGS.shadowContactOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-shadow-contact',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function contourBackStyle() {
+    return {
+      pane: 'stackContourBackPane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.contourBackColor,
+      weight: BP_MAP_SETTINGS.contourBackWeight,
+      opacity: BP_MAP_SETTINGS.contourBackOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-depth-back',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function contourMidStyle() {
+    return {
+      pane: 'stackContourMidPane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.contourMidColor,
+      weight: BP_MAP_SETTINGS.contourMidWeight,
+      opacity: BP_MAP_SETTINGS.contourMidOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-depth-mid',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function contourFrontStyle() {
+    return {
+      pane: 'stackContourFrontPane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.contourFrontColor,
+      weight: BP_MAP_SETTINGS.contourFrontWeight,
+      opacity: BP_MAP_SETTINGS.contourFrontOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-depth-front',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function innerContourStyle() {
+    return {
+      pane: 'stackInnerPane',
+      stroke: true,
+      color: BP_MAP_SETTINGS.innerColor,
+      weight: BP_MAP_SETTINGS.innerWidth,
+      opacity: BP_MAP_SETTINGS.innerOpacity,
+      fill: false,
+      fillOpacity: 0,
+      className: 'bp-map-stack bp-stack-inner-warm',
+      interactive: false,
+      lineJoin: 'round',
+      lineCap: 'round'
+    };
+  }
+
+  function createPanes() {
+    const panes = [
+      ['basemapPane', 220],
+      ['reliefPane', BP_MAP_SETTINGS.reliefPaneZIndex],
+      ['districtPane', BP_MAP_SETTINGS.districtPaneZIndex],
+      ['districtBorderPane', BP_MAP_SETTINGS.districtPaneZIndex + 25],
+      ['labelsPane', 1180],
+      ['projectsPane', 1250]
+    ];
+
+    panes.forEach(([name, zIndex]) => {
+      map.createPane(name);
+      map.getPane(name).style.zIndex = zIndex;
+    });
+
+    [
+      'basemapPane',
+      'reliefPane',
+      'districtBorderPane'
+    ].forEach(name => {
+      map.getPane(name).style.pointerEvents = 'none';
+    });
+
+    if (map.getPane('labelsPane')) map.getPane('labelsPane').style.pointerEvents = 'auto';
+    if (map.getPane('markerPane')) map.getPane('markerPane').style.zIndex = 1240;
+    if (map.getPane('popupPane')) map.getPane('popupPane').style.zIndex = 1400;
+    if (map.getPane('tooltipPane')) map.getPane('tooltipPane').style.zIndex = 1420;
+  }
+
+  function addRasterBasemapFallback() {
+    leafletMapElement.classList.add('uses-raster-fallback');
+
+    if (mapAttribution) {
+      mapAttribution.textContent = '© OpenStreetMap contributors';
+    }
+
+    basemapLayer = L.tileLayer(
+      'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        pane: 'basemapPane',
+        maxNativeZoom: 19,
+        maxZoom: 20,
+        opacity: 0.82,
+        updateWhenIdle: true,
+        updateWhenZooming: false,
+        keepBuffer: 4,
+        detectRetina: false,
+        crossOrigin: true,
+        attribution: '&copy; OpenStreetMap contributors'
+      }
+    ).addTo(map);
+  }
+
+  function applyLibertyPalette(libertyMap) {
+    const setPaint = function(layerId, property, value) {
+      if (!libertyMap.getLayer(layerId)) return;
+      libertyMap.setPaintProperty(layerId, property, value);
+    };
+
+    /* Palette proche de la référence : mer douce, végétation claire, routes blanches. */
+    setPaint('background', 'background-color', '#f8f6f1');
+    setPaint('water', 'fill-color', '#d3e7ea');
+    setPaint('waterway_tunnel', 'line-color', '#c7dfe3');
+    setPaint('waterway_river', 'line-color', '#c7dfe3');
+    setPaint('waterway_other', 'line-color', '#c7dfe3');
+    setPaint('park', 'fill-color', '#e3edd5');
+    setPaint('landcover_wood', 'fill-color', '#dce9cf');
+    setPaint('landcover_grass', 'fill-color', '#e5eedb');
+
+    const roadPattern = /(road|motorway|trunk|primary|secondary|tertiary|major|minor|service|street|path|track|highway)/i;
+    const majorPattern = /(motorway|trunk|primary|secondary|tertiary|major)/i;
+    const minorPattern = /(minor|service|street|path|track|pedestrian|residential|living)/i;
+    const hiddenRoadPattern = /(path|track|pedestrian|steps|footway|cycleway)/i;
+
+    libertyMap.getStyle().layers.forEach(function(layer) {
+      const layerId = layer.id || '';
+
+      /* Les noms de quartiers sont fournis par la carte elle-même. */
+      if (layer.type === 'symbol') {
+        libertyMap.setLayoutProperty(layerId, 'visibility', 'none');
+        return;
+      }
+
+      /* Suppression des informations techniques et des emprises aéroportuaires. */
+      if (/(aeroway|airport|runway|taxiway|helipad|rail|ferry)/i.test(layerId)) {
+        libertyMap.setLayoutProperty(layerId, 'visibility', 'none');
+        return;
+      }
+
+      if (/building/i.test(layerId) && layer.type === 'fill') {
+        try {
+          libertyMap.setLayoutProperty(layerId, 'visibility', 'visible');
+          libertyMap.setLayerZoomRange(layerId, 13, 24);
+        } catch (_) {}
+        libertyMap.setPaintProperty(layerId, 'fill-color', '#e9e4da');
+        libertyMap.setPaintProperty(layerId, 'fill-opacity', [
+          'interpolate', ['linear'], ['zoom'],
+          13, 0,
+          14, 0.48,
+          16, 0.68
+        ]);
+        libertyMap.setPaintProperty(layerId, 'fill-outline-color', '#d1c9bd');
+      }
+
+      if (/building/i.test(layerId) && layer.type === 'fill-extrusion') {
+        libertyMap.setPaintProperty(layerId, 'fill-extrusion-color', '#ddd5c9');
+        libertyMap.setPaintProperty(layerId, 'fill-extrusion-opacity', 0.68);
+        libertyMap.setPaintProperty(layerId, 'fill-extrusion-vertical-gradient', true);
+      }
+
+      if (layer.type !== 'line' || !roadPattern.test(layerId)) return;
+      if (/(water|boundary|contour)/i.test(layerId)) return;
+
+      /* Les voies de service, sentiers et cheminements secondaires sont masqués. */
+      if (hiddenRoadPattern.test(layerId)) {
+        libertyMap.setLayoutProperty(layerId, 'visibility', 'none');
+        return;
+      }
+
+      const isCasing = /casing/i.test(layerId);
+      const isMinor = minorPattern.test(layerId) && !majorPattern.test(layerId);
+      const color = isCasing
+        ? (isMinor ? '#e7e2da' : '#d8d1c6')
+        : (isMinor ? '#fbfaf7' : '#ffffff');
+      const opacity = isMinor
+        ? (isCasing
+          ? ['interpolate', ['linear'], ['zoom'], 11, 0.08, 14, 0.24, 16, 0.32]
+          : ['interpolate', ['linear'], ['zoom'], 11, 0.16, 14, 0.5, 16, 0.66])
+        : (isCasing
+          ? ['interpolate', ['linear'], ['zoom'], 9, 0.34, 14, 0.52]
+          : ['interpolate', ['linear'], ['zoom'], 9, 0.7, 14, 0.92]);
+
+      libertyMap.setPaintProperty(layerId, 'line-color', color);
+      libertyMap.setPaintProperty(layerId, 'line-opacity', opacity);
+
+      if (isCasing) {
+        libertyMap.setPaintProperty(layerId, 'line-translate', [0, 1.1]);
+        libertyMap.setPaintProperty(layerId, 'line-translate-anchor', 'viewport');
+      }
+    });
+
+    if (typeof libertyMap.setLight === 'function') {
+      libertyMap.setLight({
+        anchor: 'viewport',
+        color: '#fff7e8',
+        intensity: 0.42,
+        position: [1.15, 205, 32]
+      });
+    }
+  }
+
+  function addBasemapLayer() {
+    const supportsLiberty =
+      window.maplibregl &&
+      typeof L.maplibreGL === 'function';
+
+    if (!supportsLiberty) {
+      addRasterBasemapFallback();
+      return;
+    }
+
+    basemapLayer = L.maplibreGL({
+      pane: 'basemapPane',
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      interactive: false,
+      attributionControl: false
+    }).addTo(map);
+
+    const libertyMap = basemapLayer.getMaplibreMap();
+    let libertyLoaded = false;
+
+    libertyMap.once('load', function() {
+      applyLibertyPalette(libertyMap);
+      leafletMapElement.classList.remove('uses-raster-fallback');
+      libertyLoaded = true;
+    });
+
+    window.setTimeout(function() {
+      if (libertyLoaded || !map || !basemapLayer) return;
+
+      if (map.hasLayer(basemapLayer)) {
+        map.removeLayer(basemapLayer);
+      }
+
+      addRasterBasemapFallback();
+    }, 12000);
+  }
+
+  function showFocusMode() {
+    leafletMapElement.classList.add('is-focus-mode');
+  }
+
+  function hideFocusMode() {
+    leafletMapElement.classList.remove('is-focus-mode');
+  }
+
+  function createContourLayers() {
+    reliefLayers = [];
+  }
+
+  function clearReliefLayers() {
+    reliefLayers.forEach(layer => map.removeLayer(layer));
+    reliefLayers = [];
+  }
+
+  function getReliefVector() {
+    const x = Number(BP_MAP_SETTINGS.reliefX);
+    const y = Number(BP_MAP_SETTINGS.reliefY);
+    const length = Math.hypot(x, y) || 1;
+
+    return {
+      x,
+      y,
+      length,
+      ux: x / length,
+      uy: y / length
+    };
+  }
+
+  function getClosedScreenRing(ring) {
+    if (!ring.length) return ring;
+
+    const first = ring[0];
+    const last = ring[ring.length - 1];
+
+    if (Math.abs(first.x - last.x) < 0.01 && Math.abs(first.y - last.y) < 0.01) {
+      return ring;
+    }
+
+    return [...ring, first];
+  }
+
+  function featureToScreenPolygons(feature) {
+    const geometry = feature && feature.geometry;
+    if (!geometry) return [];
+
+    const polygons = geometry.type === 'Polygon'
+      ? [geometry.coordinates]
+      : geometry.type === 'MultiPolygon'
+        ? geometry.coordinates
+        : [];
+
+    return polygons
+      .map(polygon => {
+        if (!Array.isArray(polygon) || !polygon.length) return null;
+
+        const exterior = polygon[0]
+          .map(coord => {
+            const lng = Number(coord[0]);
+            const lat = Number(coord[1]);
+
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+            const point = map.latLngToContainerPoint([lat, lng]);
+            return { x: point.x, y: point.y };
+          })
+          .filter(Boolean);
+
+        if (exterior.length < 3) return null;
+
+        return { exterior: getClosedScreenRing(exterior) };
+      })
+      .filter(Boolean);
+  }
+
+  function turfPolygonFromScreenRing(ring, props = {}) {
+    const closed = getClosedScreenRing(ring);
+    const coords = closed.map(point => [point.x, point.y]);
+
+    if (coords.length < 4) return null;
+
+    return {
+      type: 'Feature',
+      properties: props,
+      geometry: {
+        type: 'Polygon',
+        coordinates: [coords]
+      }
+    };
+  }
+
+  function pixelGeometryToLngLatGeometry(geometry) {
+    function convertPoint(coord) {
+      const latLng = map.containerPointToLatLng(L.point(coord[0], coord[1]));
+      return [latLng.lng, latLng.lat];
+    }
+
+    function convertRing(ring) {
+      return ring.map(convertPoint);
+    }
+
+    if (geometry.type === 'Polygon') {
+      return {
+        type: 'Polygon',
+        coordinates: geometry.coordinates.map(convertRing)
+      };
+    }
+
+    if (geometry.type === 'MultiPolygon') {
+      return {
+        type: 'MultiPolygon',
+        coordinates: geometry.coordinates.map(polygon => polygon.map(convertRing))
+      };
+    }
+
+    return null;
+  }
+
+  function pixelFeatureToLngLatFeature(feature, props = {}) {
+    if (!feature || !feature.geometry) return null;
+
+    const geometry = pixelGeometryToLngLatGeometry(feature.geometry);
+    if (!geometry) return null;
+
+    return {
+      type: 'Feature',
+      properties: props,
+      geometry
+    };
+  }
+
+  function shiftedScreenRing(ring, offsetX, offsetY) {
+    return ring.map(point => ({
+      x: point.x + offsetX,
+      y: point.y + offsetY
+    }));
+  }
+
+  function makeReliefDifferenceFeatureCollection(polygons, offsetX, offsetY, layerName) {
+    const features = [];
+
+    if (typeof turf === 'undefined' || !turf.difference) {
+      console.warn('Turf.js est introuvable : le relief par différence polygonale ne peut pas être calculé.');
+      return {
+        type: 'FeatureCollection',
+        features: []
+      };
+    }
+
+    polygons.forEach(poly => {
+      const original = turfPolygonFromScreenRing(poly.exterior, { role: 'original' });
+      const shifted = turfPolygonFromScreenRing(shiftedScreenRing(poly.exterior, offsetX, offsetY), { role: 'shifted' });
+
+      if (!original || !shifted) return;
+
+      let result = null;
+
+      try {
+        result = turf.difference(shifted, original);
+      } catch (error) {
+        console.warn('Différence polygonale impossible pour ce quartier.', error);
+      }
+
+      const feature = pixelFeatureToLngLatFeature(result, {
+        method: 'leafletPolygonDifferenceStable',
+        layer: layerName
+      });
+
+      if (feature) features.push(feature);
+    });
+
+    return {
+      type: 'FeatureCollection',
+      features
+    };
+  }
+
+  function addReliefLayer(geojson, style, blur = 0) {
+    if (!geojson || !geojson.features || !geojson.features.length) return null;
+
+    const layer = L.geoJSON(geojson, {
+      pane: 'reliefPane',
+      interactive: false,
+      bubblingMouseEvents: false,
+      style: Object.assign({
+        pane: 'reliefPane',
+        stroke: false,
+        fill: true,
+        fillRule: 'evenodd',
+        lineJoin: 'round',
+        lineCap: 'round'
+      }, style)
+    });
+
+    layer.addTo(map);
+
+    if (blur > 0) {
+      layer.eachLayer(child => {
+        const el = child.getElement && child.getElement();
+        if (el) {
+          el.style.filter = `blur(${blur}px)`;
+          el.style.transformBox = 'fill-box';
+          el.style.transformOrigin = 'center';
+        }
+      });
+    }
+
+    reliefLayers.push(layer);
+    return layer;
+  }
+
+  function renderPolygonDifferenceRelief(feature = activeDistrictFeature) {
+    if (!map) return;
+
+    clearReliefLayers();
+
+    if (!feature) return;
+
+    const polygons = featureToScreenPolygons(feature);
+    if (!polygons.length) return;
+
+    const vector = getReliefVector();
+
+    const midOffset = {
+      x: vector.ux * vector.length * BP_MAP_SETTINGS.midDepth,
+      y: vector.uy * vector.length * BP_MAP_SETTINGS.midDepth
+    };
+
+    const endOffset = {
+      x: vector.ux * vector.length * BP_MAP_SETTINGS.endDepth,
+      y: vector.uy * vector.length * BP_MAP_SETTINGS.endDepth
+    };
+
+    const shadowOffset = {
+      x: vector.ux * vector.length * BP_MAP_SETTINGS.shadowDepth,
+      y: vector.uy * vector.length * BP_MAP_SETTINGS.shadowDepth
+    };
+
+    addReliefLayer(makeReliefDifferenceFeatureCollection(polygons, shadowOffset.x, shadowOffset.y, 'shadow'), {
+      fillColor: BP_MAP_SETTINGS.shadowColor,
+      fillOpacity: BP_MAP_SETTINGS.shadowOpacity,
+      color: BP_MAP_SETTINGS.shadowColor,
+      weight: 0,
+      opacity: 0
+    }, BP_MAP_SETTINGS.shadowBlur);
+
+    addReliefLayer(makeReliefDifferenceFeatureCollection(polygons, endOffset.x, endOffset.y, 'end'), {
+      fillColor: BP_MAP_SETTINGS.endColor,
+      fillOpacity: BP_MAP_SETTINGS.endOpacity,
+      color: BP_MAP_SETTINGS.endColor,
+      weight: 0,
+      opacity: 0
+    });
+
+    addReliefLayer(makeReliefDifferenceFeatureCollection(polygons, midOffset.x, midOffset.y, 'mid'), {
+      fillColor: BP_MAP_SETTINGS.midColor,
+      fillOpacity: BP_MAP_SETTINGS.midOpacity,
+      color: BP_MAP_SETTINGS.midColor,
+      weight: 0,
+      opacity: 0
+    });
+
+    bringFocusLayersToFront();
+  }
+
+  function scheduleReliefRender() {
+    if (!activeDistrictFeature) return;
+
+    if (reliefRenderRaf) {
+      cancelAnimationFrame(reliefRenderRaf);
+    }
+
+    reliefRenderRaf = requestAnimationFrame(() => {
+      reliefRenderRaf = null;
+      renderPolygonDifferenceRelief();
+    });
+  }
+
+  function showDistrictContours(feature) {
+    renderPolygonDifferenceRelief(feature);
+  }
+
+  function clearDistrictContours() {
+    clearReliefLayers();
+  }
+
+  function bringFocusLayersToFront() {
+    if (activeDistrictLayer && activeDistrictLayer.bringToFront) {
+      activeDistrictLayer.bringToFront();
+    }
+
+    if (districtBorderLayer && districtBorderLayer.bringToFront) {
+      districtBorderLayer.bringToFront();
+    }
+
+    if (labelLayer) {
+      labelLayer.eachLayer(marker => {
+        if (marker.bringToFront) marker.bringToFront();
+      });
+    }
+
+    if (projectLayer) {
+      projectLayer.eachLayer(marker => {
+        if (marker.bringToFront) marker.bringToFront();
+      });
+    }
+  }
+
+  function addDistrictLayers() {
+    districtLayer = L.geoJSON(districtsGeojson, {
+      pane: 'districtPane',
+      style: districtBaseStyle,
+      onEachFeature: function(feature, layer) {
+        layer.on('mouseover', function() {
+          if (activeDistrictLayer !== layer && !activeDistrictFeature) {
+            layer.setStyle(districtHoverStyle());
+          }
+        });
+
+        layer.on('mouseout', function() {
+          updateDistrictStyles();
+        });
+
+        layer.on('click', function(event) {
+          L.DomEvent.stopPropagation(event);
+          selectDistrict(feature, layer);
+        });
+      }
+    }).addTo(map);
+
+    districtBorderLayer = L.geoJSON(districtsGeojson, {
+      pane: 'districtBorderPane',
+      interactive: false,
+      style: districtBorderStyle
+    }).addTo(map);
+  }
+
+  function createLabelIcon(name) {
+    const label = cleanDistrictLabel(name);
+    const shortLabel = label.length > 21 ? label.slice(0, 20) + '…' : label;
+
+    return L.divIcon({
+      className: 'bp-district-badge-icon',
+      html: `<div class="bp-district-label">${escapeHtml(shortLabel)}</div>`,
+      iconSize: [138, 30],
+      iconAnchor: [69, 15]
+    });
+  }
+
+  function addLabels() {
+    labelLayer = L.layerGroup([], {
+      pane: 'labelsPane'
+    }).addTo(map);
+
+    districtLabelMarkers.clear();
+
+    districtLayer.eachLayer(layer => {
+      const feature = layer.feature;
+      const name = getDistrictName(feature);
+      const key = getDistrictKey(feature);
+      const center = layer.getBounds().getCenter();
+
+      const marker = L.marker(center, {
+        pane: 'labelsPane',
+        interactive: true,
+        keyboard: false,
+        bubblingMouseEvents: false,
+        zIndexOffset: 7600,
+        icon: createLabelIcon(name)
+      }).addTo(labelLayer);
+
+      marker.on('click', event => {
+        L.DomEvent.stopPropagation(event);
+        selectDistrict(feature, layer);
+      });
+
+      marker.on('mouseover', () => {
+        if (activeDistrictLayer !== layer && !activeDistrictFeature) {
+          layer.setStyle(districtHoverStyle());
+        }
+      });
+
+      marker.on('mouseout', updateDistrictStyles);
+
+      districtLabelMarkers.set(key, marker);
+    });
+  }
+
+  function updateLabelsVisibility() {
+    if (!districtLabelMarkers.size) return;
+
+    const activeKey = activeDistrictFeature ? getDistrictKey(activeDistrictFeature) : null;
+
+    districtLabelMarkers.forEach((marker, key) => {
+      const element = marker.getElement && marker.getElement();
+
+      if (element) {
+        element.classList.remove('is-active', 'is-dimmed', 'is-hidden');
+      }
+
+      if (!activeKey) {
+        marker.setOpacity(0);
+
+        if (element) {
+          element.classList.add('is-hidden');
+        }
+
+        return;
+      }
+
+      if (key === activeKey) {
+        marker.setOpacity(1);
+
+        if (element) {
+          element.classList.add('is-active');
+        }
+      } else {
+        marker.setOpacity(0);
+
+        if (element) {
+          element.classList.add('is-hidden');
+        }
+      }
+    });
+  }
+
+  function updateDistrictStyles() {
+    if (!districtLayer) return;
+
+    districtLayer.eachLayer(layer => {
+      if (!activeDistrictLayer) {
+        layer.setStyle(districtBaseStyle());
+        return;
+      }
+
+      if (layer === activeDistrictLayer) {
+        layer.setStyle(districtActiveStyle());
+      } else {
+        layer.setStyle(districtDimmedStyle());
+      }
+    });
+
+    if (districtBorderLayer) {
+      districtBorderLayer.setStyle(districtBorderStyle);
+    }
+
+    updateLabelsVisibility();
+    bringFocusLayersToFront();
+  }
+
+  function getProjectLocationKey(project, precision = 5) {
+    const lat = Number(project.lat);
+    const lng = Number(project.lng);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    return `${lat.toFixed(precision)}|${lng.toFixed(precision)}`;
+  }
+
+  function groupProjectsByLocation(projects) {
+    const groups = new Map();
+
+    projects.forEach(project => {
+      const key = getProjectLocationKey(project);
+      if (!key) return;
+
+      if (!groups.has(key)) {
+        groups.set(key, {
+          lat: Number(project.lat),
+          lng: Number(project.lng),
+          projects: []
+        });
+      }
+
+      groups.get(key).projects.push(project);
+    });
+
+    return Array.from(groups.values());
+  }
+
+  function getLocationMarkerType(projects) {
+    const counts = projects.reduce((acc, project) => {
+      const type = getStatusType(project.statut);
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {
+      done: 0,
+      progress: 0,
+      study: 0,
+      default: 0
+    });
+
+    const total = projects.length;
+
+    /* Une majorité absolue de projets réalisés reste prioritaire. */
+    if (counts.done > total / 2) return 'done';
+
+    /* Dès qu'un projet est en cours, l'orange prime sur le bleu. */
+    if (counts.progress > 0) return 'progress';
+
+    /* Le bleu n'est utilisé que s'il n'y a aucun projet en cours. */
+    if (counts.study > total / 2) return 'study';
+
+    /* Cas homogènes ou égalités sans projet en cours. */
+    if (counts.done === total) return 'done';
+    if (counts.study === total) return 'study';
+    if (counts.default === total) return 'default';
+
+    return 'multi';
+  }
+
+  function createProjectIcon(projectsAtLocation, isFocusMode = false, isBackgroundDot = false) {
+    const projects = Array.isArray(projectsAtLocation)
+      ? projectsAtLocation
+      : [projectsAtLocation];
+
+    const type = getLocationMarkerType(projects);
+    const count = projects.length;
+    const countBadge = count > 1 && isFocusMode
+      ? `<span class="bp-project-location-count" aria-hidden="true">${count}</span>`
+      : '';
+
+    if (!isFocusMode) {
+      const baseDotSize = Number(BP_MAP_SETTINGS.dotSize);
+      const baseDotBorder = Number(BP_MAP_SETTINGS.dotBorder);
+      const dotSize = isBackgroundDot ? baseDotSize * 0.62 : baseDotSize;
+      const dotBorder = isBackgroundDot ? baseDotBorder * 0.65 : baseDotBorder;
+      const size = dotSize + dotBorder * 2;
+      const backgroundClass = isBackgroundDot ? ' bp-project-dot--zoom-background' : '';
+
+      return L.divIcon({
+        className: 'bp-project-dot-icon',
+        html: `
+          <div
+            class="bp-project-dot bp-project-dot--${type}${backgroundClass}"
+            style="width:${dotSize}px;height:${dotSize}px;border-width:${dotBorder}px"
+          ></div>
+          ${countBadge}
+        `,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2],
+        popupAnchor: [0, -6]
+      });
+    }
+
+    return L.divIcon({
+      className: 'bp-pin-icon',
+      html: `
+        <div class="bp-pin bp-pin--${type} bp-pin--focus">
+          <span></span>
+        </div>
+        ${countBadge}
+      `,
+      iconSize: [32, 40],
+      iconAnchor: [16, 38],
+      popupAnchor: [0, -35]
+    });
+  }
+
+
+  function yes(key) {
+    return BP_LAYOUT_SETTINGS[key] === 'yes';
+  }
+
+  function buildProjectPopup(project) {
+    const title = escapeHtml(project.title || 'Projet sans titre');
+    const description = escapeHtml(truncateText(project.bodyText, Number(BP_LAYOUT_SETTINGS.popupBodyChars)));
+    const quartier = escapeHtml(project.quartier || 'Non renseigné');
+    const address = escapeHtml(project.formatted_address || 'Non renseignée');
+    const category = escapeHtml(project.category || 'Non renseignée');
+    const edition = escapeHtml(formatEditionLabel(project.edition_bp));
+    const status = escapeHtml(getStatusLabel(project.statut));
+    const link = getSafeUrl(project.url);
+    const buttonText = escapeHtml(BP_LAYOUT_SETTINGS.buttonText || 'Voir le projet');
+
+    const metaRows = [];
+
+    if (yes('showQuartier')) metaRows.push(`<div><strong>Quartier :</strong> ${quartier}</div>`);
+    if (yes('showAddress')) metaRows.push(`<div><strong>Adresse :</strong> ${address}</div>`);
+    if (yes('showCategory')) metaRows.push(`<div><strong>Catégorie :</strong> ${category}</div>`);
+    if (yes('showEdition')) metaRows.push(`<div><strong>Édition :</strong> ${edition}</div>`);
+    if (yes('showStatus')) metaRows.push(`<div><strong>Statut :</strong> ${status}</div>`);
+
+    return `
+      <div class="bp-project-popup bp-project-popup--${escapeHtml(BP_LAYOUT_SETTINGS.popupPreset)}">
+        <div class="bp-project-popup__eyebrow">
+          ${yes('showStatus') ? `<span class="bp-project-popup__pill bp-project-popup__pill--status">${status}</span>` : ''}
+          ${yes('showCategory') ? `<span class="bp-project-popup__pill">${category}</span>` : ''}
+        </div>
+
+        <h3>${title}</h3>
+        ${description ? `<p>${description}</p>` : ''}
+
+        ${metaRows.length ? `
+          <div class="bp-project-popup__meta">
+            ${metaRows.join('')}
+          </div>
+        ` : ''}
+
+        <a class="bp-project-popup__cta" href="${link}" target="_blank" rel="noopener noreferrer">
+          ${buttonText}
+        </a>
+      </div>
+    `;
+  }
+
+  function buildProjectsPopup(projectsAtLocation) {
+    if (projectsAtLocation.length === 1) {
+      return buildProjectPopup(projectsAtLocation[0]);
+    }
+
+    return `
+      <div class="bp-project-group-popup">
+        <div class="bp-project-group-popup__header">
+          <strong>${projectsAtLocation.length} projets à cet emplacement</strong>
+          <span>Les projets sont présentés séparément ci-dessous.</span>
+        </div>
+
+        <div class="bp-project-group-popup__list">
+          ${projectsAtLocation.map((project, index) => `
+            <article class="bp-project-group-popup__item">
+              <div class="bp-project-group-popup__number">Projet ${index + 1}</div>
+              ${buildProjectPopup(project)}
+            </article>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderProjectMarkers(projects = getFilteredProjects(), isFocusMode = false) {
+    if (!projectLayer) return;
+
+    projectLayer.clearLayers();
+    projectMarkers = [];
+
+    const validProjects = projects.filter(project => {
+      return Number.isFinite(Number(project.lat)) && Number.isFinite(Number(project.lng));
+    });
+
+    groupProjectsByLocation(validProjects).forEach(locationGroup => {
+      const projectsAtLocation = locationGroup.projects;
+      const projectCount = projectsAtLocation.length;
+      const markerTitle = projectCount > 1
+        ? `${projectCount} projets à cet emplacement`
+        : (projectsAtLocation[0].title || 'Projet');
+
+      const marker = L.marker([locationGroup.lat, locationGroup.lng], {
+        pane: 'projectsPane',
+        icon: createProjectIcon(projectsAtLocation, isFocusMode),
+        title: markerTitle,
+        zIndexOffset: isFocusMode ? 10000 : 9000
+      });
+
+      const popupOptions = {
+        maxWidth: projectCount > 1
+          ? Math.max(440, Number(BP_LAYOUT_SETTINGS.popupMaxWidth))
+          : Number(BP_LAYOUT_SETTINGS.popupMaxWidth),
+        className: `bp-project-leaflet-popup bp-card-style-${BP_LAYOUT_SETTINGS.popupPreset}`,
+        closeButton: true
+      };
+
+      marker.bindPopup(buildProjectsPopup(projectsAtLocation), popupOptions);
+      marker.addTo(projectLayer);
+      projectMarkers.push(marker);
+    });
+  }
+
+  function showProjectsForDistrict(feature) {
+    if (!projectLayer) return;
+
+    projectLayer.clearLayers();
+    projectMarkers = [];
+
+    const filteredProjects = getFilteredProjects().filter(project => {
+      return Number.isFinite(Number(project.lat)) && Number.isFinite(Number(project.lng));
+    });
+
+    const focusedProjects = new Set(getProjectsForDistrict(feature, true));
+
+    groupProjectsByLocation(filteredProjects).forEach(locationGroup => {
+      const projectsAtLocation = locationGroup.projects;
+      const focusedProjectsAtLocation = projectsAtLocation.filter(project => {
+        return focusedProjects.has(project);
+      });
+
+      const isFocusedLocation = focusedProjectsAtLocation.length > 0;
+      const displayedProjects = isFocusedLocation
+        ? focusedProjectsAtLocation
+        : projectsAtLocation;
+
+      const projectCount = displayedProjects.length;
+      const markerTitle = projectCount > 1
+        ? `${projectCount} projets à cet emplacement`
+        : (displayedProjects[0].title || 'Projet');
+
+      const marker = L.marker([locationGroup.lat, locationGroup.lng], {
+        pane: 'projectsPane',
+        icon: createProjectIcon(displayedProjects, isFocusedLocation, !isFocusedLocation),
+        title: markerTitle,
+        zIndexOffset: isFocusedLocation ? 10000 : 9000
+      });
+
+      marker.bindPopup(buildProjectsPopup(displayedProjects), {
+        maxWidth: projectCount > 1
+          ? Math.max(440, Number(BP_LAYOUT_SETTINGS.popupMaxWidth))
+          : Number(BP_LAYOUT_SETTINGS.popupMaxWidth),
+        className: `bp-project-leaflet-popup bp-card-style-${BP_LAYOUT_SETTINGS.popupPreset}`,
+        closeButton: true
+      });
+
+      marker.addTo(projectLayer);
+      projectMarkers.push(marker);
+    });
+  }
+
+  function getAverageProjectCenter(latLngs) {
+    const total = latLngs.reduce((acc, latLng) => {
+      acc.lat += latLng[0];
+      acc.lng += latLng[1];
+      return acc;
+    }, { lat: 0, lng: 0 });
+
+    return L.latLng(total.lat / latLngs.length, total.lng / latLngs.length);
+  }
+
+  function getFocusTarget(feature, fallbackLayer) {
+    const projects = getProjectsForDistrict(feature, true);
+
+    const latLngs = projects
+      .filter(project => {
+        return Number.isFinite(Number(project.lat)) && Number.isFinite(Number(project.lng));
+      })
+      .map(project => {
+        return [Number(project.lat), Number(project.lng)];
+      });
+
+    if (!latLngs.length) {
+      return {
+        type: 'bounds',
+        bounds: fallbackLayer.getBounds(),
+        options: {
+          padding: [90, 90],
+          maxZoom: BP_MAP_SETTINGS.zoomFallback,
+          animate: true,
+          duration: BP_MAP_SETTINGS.flyDuration
+        }
+      };
+    }
+
+    const center = getAverageProjectCenter(latLngs);
+    let targetZoom = BP_MAP_SETTINGS.zoomMediumProjects;
+
+    if (latLngs.length === 1) {
+      targetZoom = BP_MAP_SETTINGS.zoomOneProject;
+    } else if (latLngs.length <= 3) {
+      targetZoom = BP_MAP_SETTINGS.zoomFewProjects;
+    } else if (latLngs.length <= 8) {
+      targetZoom = BP_MAP_SETTINGS.zoomMediumProjects;
+    } else {
+      targetZoom = BP_MAP_SETTINGS.zoomManyProjects;
+    }
+
+    return {
+      type: 'center',
+      center,
+      zoom: targetZoom,
+      options: {
+        animate: true,
+        duration: BP_MAP_SETTINGS.flyDuration
+      }
+    };
+  }
+
+  function moveToFocusTarget(target) {
+    if (target.type === 'bounds') {
+      map.flyToBounds(target.bounds, target.options);
+      return;
+    }
+
+    map.flyTo(target.center, target.zoom, target.options);
+  }
+
+  function selectDistrict(feature, layer) {
+    activeDistrictFeature = feature;
+    activeDistrictLayer = layer;
+
+    map.closePopup();
+
+    showFocusMode();
+    showDistrictContours(feature);
+    updateDistrictStyles();
+    showProjectsForDistrict(feature);
+
+    if (focusDistrictName) {
+      focusDistrictName.textContent = cleanDistrictLabel(getDistrictName(feature));
+    }
+
+    if (focusBadge) {
+      focusBadge.classList.add('is-visible');
+    }
+
+    globalViewButton.classList.add('is-visible');
+
+    moveToFocusTarget(getFocusTarget(feature, layer));
+
+    window.setTimeout(() => {
+      renderPolygonDifferenceRelief(feature);
+      bringFocusLayersToFront();
+    }, 120);
+
+    window.setTimeout(() => {
+      renderPolygonDifferenceRelief(feature);
+      bringFocusLayersToFront();
+    }, 720);
+  }
+
+  function resetMap() {
+    activeDistrictFeature = null;
+    activeDistrictLayer = null;
+
+    map.closePopup();
+
+    hideFocusMode();
+    clearDistrictContours();
+    updateDistrictStyles();
+
+    if (focusBadge) {
+      focusBadge.classList.remove('is-visible');
+    }
+
+    globalViewButton.classList.remove('is-visible');
+
+    renderProjectMarkers(getFilteredProjects(), false);
+
+    if (districtLayer) {
+      map.flyToBounds(districtLayer.getBounds(), {
+        padding: [20, 20],
+        animate: true,
+        duration: 0.65
+      });
+    }
+  }
+
+  function refreshMap() {
+    if (!map) return;
+
+    map.closePopup();
+
+    if (activeDistrictFeature) {
+      showProjectsForDistrict(activeDistrictFeature);
+      return;
+    }
+
+    renderProjectMarkers(getFilteredProjects(), false);
+  }
+
+  function applyLayoutSettings() {
+    if (!exploreSection) return;
+
+    exploreSection.classList.remove(
+      'bp-layout--split',
+      'bp-layout--overlay',
+      'bp-layout--wide',
+      'bp-layout--compact'
+    );
+
+    exploreSection.classList.add(`bp-layout--${BP_LAYOUT_SETTINGS.layoutMode}`);
+
+    exploreSection.style.setProperty('--bp-lab-section-pad-top', `${BP_LAYOUT_SETTINGS.sectionPadTop}px`);
+    exploreSection.style.setProperty('--bp-lab-section-pad-bottom', `${BP_LAYOUT_SETTINGS.sectionPadBottom}px`);
+    exploreSection.style.setProperty('--bp-lab-section-pad-y', `${BP_LAYOUT_SETTINGS.sectionPadY}px`);
+    exploreSection.style.setProperty('--bp-lab-section-pad-x', `${BP_LAYOUT_SETTINGS.sectionPadX}px`);
+    exploreSection.style.setProperty('--bp-lab-inner-max', `${BP_LAYOUT_SETTINGS.innerMax}px`);
+    exploreSection.style.setProperty('--bp-lab-left-width', `${BP_LAYOUT_SETTINGS.leftWidth}px`);
+    exploreSection.style.setProperty('--bp-lab-gap', `${BP_LAYOUT_SETTINGS.gap}px`);
+    exploreSection.style.setProperty('--bp-lab-map-height', `${BP_LAYOUT_SETTINGS.mapHeight}px`);
+    exploreSection.style.setProperty('--bp-lab-map-radius', `${BP_LAYOUT_SETTINGS.mapRadius}px`);
+    exploreSection.style.setProperty('--bp-lab-title-scale', BP_LAYOUT_SETTINGS.titleScale);
+
+    const mapShadow = Number(BP_LAYOUT_SETTINGS.mapShadow);
+    exploreSection.style.setProperty(
+      '--bp-lab-map-shadow',
+      mapShadow > 0 ? `0 28px 80px rgba(15, 23, 42, ${mapShadow})` : 'none'
+    );
+
+    exploreSection.style.setProperty('--bp-lab-overlay-width', `${BP_LAYOUT_SETTINGS.overlayWidth}px`);
+    exploreSection.style.setProperty('--bp-lab-overlay-padding', `${BP_LAYOUT_SETTINGS.overlayPadding}px`);
+    exploreSection.style.setProperty('--bp-lab-overlay-radius', `${BP_LAYOUT_SETTINGS.overlayRadius}px`);
+
+    exploreSection.style.setProperty('--bp-popup-radius', `${BP_LAYOUT_SETTINGS.popupRadius}px`);
+    exploreSection.style.setProperty('--bp-popup-padding', `${BP_LAYOUT_SETTINGS.popupPadding}px`);
+    exploreSection.style.setProperty('--bp-popup-title-size', `${BP_LAYOUT_SETTINGS.popupTitleSize}px`);
+    exploreSection.style.setProperty('--bp-popup-desc-size', `${BP_LAYOUT_SETTINGS.popupDescSize}px`);
+    exploreSection.style.setProperty('--bp-popup-shadow', `0 24px 70px rgba(15, 23, 42, ${BP_LAYOUT_SETTINGS.popupShadow})`);
+    exploreSection.style.setProperty('--bp-popup-inner-width', `${Math.max(240, Number(BP_LAYOUT_SETTINGS.popupMaxWidth) - 40)}px`);
+
+    if (BP_LAYOUT_SETTINGS.popupPreset === 'glass') {
+      exploreSection.style.setProperty('--bp-popup-bg', 'rgba(255, 255, 255, 0.82)');
+    } else {
+      exploreSection.style.setProperty('--bp-popup-bg', '#ffffff');
+    }
+
+    if (BP_LAYOUT_SETTINGS.popupMetaStyle === 'glass') {
+      exploreSection.style.setProperty('--bp-popup-meta-bg', 'rgba(255, 247, 237, 0.68)');
+    } else if (BP_LAYOUT_SETTINGS.popupMetaStyle === 'hidden') {
+      exploreSection.style.setProperty('--bp-popup-meta-bg', 'transparent');
+    } else {
+      exploreSection.style.setProperty('--bp-popup-meta-bg', '#fff7ed');
+    }
+
+    if (BP_LAYOUT_SETTINGS.popupButtonStyle === 'orange') {
+      exploreSection.style.setProperty('--bp-popup-button-bg', 'var(--bp-orange)');
+      exploreSection.style.setProperty('--bp-popup-button-radius', '999px');
+    } else if (BP_LAYOUT_SETTINGS.popupButtonStyle === 'outline') {
+      exploreSection.style.setProperty('--bp-popup-button-bg', 'transparent');
+      exploreSection.style.setProperty('--bp-popup-button-radius', '999px');
+    } else {
+      exploreSection.style.setProperty('--bp-popup-button-bg', 'var(--bp-navy)');
+      exploreSection.style.setProperty('--bp-popup-button-radius', '13px');
+    }
+  }
+
+
+  function initMap() {
+    updateCssVariables();
+
+    map = L.map('bpLeafletMap', {
+      center: [-20.89, 55.45],
+      zoom: 11,
+      zoomControl: false,
+      attributionControl: false,
+      dragging: true,
+      scrollWheelZoom: true,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: true,
+      preferCanvas: false,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelDebounceTime: 60,
+      wheelPxPerZoomLevel: 120,
+      minZoom: 9,
+      maxZoom: 20
+    });
+
+    createPanes();
+    updateCssVariables();
+    addBasemapLayer();
+    createContourLayers();
+    addDistrictLayers();
+    addLabels();
+
+    projectLayer = L.layerGroup([], {
+      pane: 'projectsPane'
+    }).addTo(map);
+
+    renderProjectMarkers(getFilteredProjects(), false);
+
+    map.on('moveend zoomend resize viewreset', scheduleReliefRender);
+
+    map.fitBounds(districtLayer.getBounds(), {
+      padding: [20, 20],
+      animate: false
+    });
+
+    setTimeout(() => {
+      map.invalidateSize();
+
+      if (districtLayer) {
+        map.fitBounds(districtLayer.getBounds(), {
+          padding: [20, 20],
+          animate: false
+        });
+      }
+    }, 150);
+  }
+
+  Promise.all([
+    fetch(projectsUrl).then(response => response.json()),
+    fetch(districtsUrl).then(response => response.json())
+  ])
+    .then(([projects, geojson]) => {
+      const seen = new Set();
+
+      allProjects = projects.filter(project => {
+        const lat = Number(project.lat);
+        const lng = Number(project.lng);
+        const status = String(project.statut || '').trim();
+        const key = `${project.id || project.title}-${project.edition_bp}-${lat}-${lng}`;
+
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+        if (getStatusType(status) === 'cancelled') return false;
+        if (seen.has(key)) return false;
+
+        seen.add(key);
+        return true;
+      });
+
+      districtsGeojson = geojson;
+
+      if (districtsGeojson && Array.isArray(districtsGeojson.features)) {
+        districtsGeojson.features.forEach((feature, index) => {
+          getDistrictKey(feature, index);
+        });
+      }
+
+      populateEditionFilter(allProjects);
+      buildProjectsByDistrictIndex();
+      initMap();
+    })
+    .catch(error => {
+      console.error('Erreur de chargement de la carte BP contour-only :', error);
+    });
+
+  editionFilter.addEventListener('change', refreshMap);
+  searchInput.addEventListener('input', debounce(refreshMap, 180));
+
+  globalViewButton.addEventListener('click', function(event) {
+    event.stopPropagation();
+    resetMap();
+  });
+
+
+  window.addEventListener('resize', function() {
+    if (!map) return;
+
+    map.invalidateSize();
+
+    if (activeDistrictLayer) {
+      const target = getFocusTarget(activeDistrictFeature, activeDistrictLayer);
+
+      if (target.type === 'bounds') {
+        map.fitBounds(target.bounds, {
+          ...target.options,
+          animate: false
+        });
+      } else {
+        map.setView(target.center, target.zoom, {
+          animate: false
+        });
+      }
+
+      window.setTimeout(scheduleReliefRender, 80);
+      window.setTimeout(updateLabelsVisibility, 90);
+    } else if (districtLayer) {
+      map.fitBounds(districtLayer.getBounds(), {
+        padding: [20, 20],
+        animate: false
+      });
+    }
+  });
+  applyLayoutSettings();
+
+
+  updateCssVariables();
+})();
+</script>
+
