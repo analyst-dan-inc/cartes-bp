@@ -1,15 +1,12 @@
 # Carte du budget participatif de Saint-Denis
 
-Ce dépôt réunit le code de la carte et les données associées. Les historiques des deux dépôts d’origine sont conservés par une fusion Git.
+Ce dépôt contient les deux pages de la carte actuelle, leur fichier de données et cette documentation. Les fichiers inutilisés ont été retirés de la version courante. Ils restent disponibles dans les historiques Git des deux dépôts réunis.
 
 ## Fichiers
 
 - `index.html` : page de présentation et carte.
 - `map.html` : carte seule, destinée à l’intégration.
 - `carte-projets-bp.json` : fichier actuellement chargé par les deux cartes (99 projets au moment du regroupement).
-- `projets-carte-budget-participatif-bp1-bp2-bp3-bp4-fusion` et `projets-carte-budget-participatif-bp1-bp4-fusion.json` : autres versions des données (99 entrées chacune).
-- `projets-carte-budget-participatif.json` : autre version des données (43 entrées).
-- `routes-saint-denis.geojson` : réseau routier (3 401 éléments), conservé pour la reprise ; non chargé par les deux pages actuelles.
 
 ## Données et mises à jour
 
